@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电子木鱼 · 完整修仙境界版</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(145deg, #2b2b2b, #1a1a1a);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 16px;
+        }
+        .container {
+            position: relative;
+            background: var(--bg-color, #3e2e1f);
+            padding: 24px 20px 20px;
+            border-radius: 60px 60px 30px 30px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.6);
+            border: 4px solid var(--border-color, #b87c4b);
+            width: 440px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        /* 皮肤主题 */
+        .container.wood {
+            --bg-color: #3e2e1f;
+            --border-color: #b87c4b;
+            --primary: #b87c4b;
+            --secondary: #9d5f32;
+            --text-light: #fdeacb;
+            --text-dark: #3e2e1f;
+            --accent: #ffd98c;
+        }
+        .container.dark {
+            --bg-color: #1e1e2f;
+            --border-color: #4a4a6a;
+            --primary: #4a4a6a;
+            --secondary: #2d2d44;
+            --text-light: #c0c0e0;
+            --text-dark: #0a0a14;
+            --accent: #a0a0ff;
+        }
+        .container.gold {
+            --bg-color: #4a3c1a;
+            --border-color: #e6b422;
+            --primary: #e6b422;
+            --secondary: #b8860b;
+            --text-light: #fff2b5;
+            --text-dark: #3a2e0f;
+            --accent: #ffd966;
+        }
+        .container.crystal {
+            --bg-color: #2a4d5c;
+            --border-color: #7fcdff;
+            --primary: #7fcdff;
+            --secondary: #3fa0d0;
+            --text-light: #e0f0ff;
+            --text-dark: #103845;
+            --accent: #b0e0ff;
+        }
+
+        .muyu {
+            width: 280px;
+            cursor: pointer;
+            filter: drop-shadow(0 10px 5px rgba(0,0,0,0.5));
+            transition: transform 0.05s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        .muyu:active {
+            transform: scale(0.95);
+        }
+        .muyu-svg {
+            width: 100%;
+            height: auto;
+        }
+        .muyu-svg .body {
+            fill: var(--primary);
+            stroke: var(--secondary);
+        }
+        .muyu-svg .dots {
+            fill: var(--accent);
+            stroke: var(--secondary);
+        }
+        .muyu-svg .mouth {
+            stroke: var(--secondary);
+        }
+
+        /* 称号区域 */
+        .title-area {
+            background: var(--secondary);
+            color: var(--text-light);
+            border-radius: 40px;
+            padding: 8px 20px;
+            margin: 10px 0 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .title-badge {
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 20px;
+            transition: background 0.3s, color 0.3s;
+            background: var(--title-bg);
+            color: var(--title-color);
+            text-shadow: 0 0 5px currentColor;
+        }
+        /* 渡劫以上可加闪烁效果 */
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px gold, 0 0 10px gold; }
+            50% { text-shadow: 0 0 20px orange, 0 0 30px orange; }
+            100% { text-shadow: 0 0 5px gold, 0 0 10px gold; }
+        }
+        .glow-text {
+            animation: glow 2s infinite;
+        }
+
+        .counter-panel {
+            background: var(--text-light);
+            padding: 12px 20px;
+            border-radius: 100px;
+            margin: 8px auto 12px;
+            width: fit-content;
+            border: 3px solid var(--border-color);
+            font-weight: bold;
+            font-size: 28px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .counter-panel span {
+            background: var(--secondary);
+            color: var(--accent);
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-size: 36px;
+            min-width: 120px;
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--secondary);
+            padding: 10px 15px;
+            border-radius: 40px;
+            margin: 12px 0;
+            color: var(--text-light);
+        }
+        button, select {
+            background: var(--text-light);
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-dark);
+            cursor: pointer;
+            outline: none;
+            transition: 0.1s ease;
+            box-shadow: 0 3px 0 var(--secondary);
+        }
+        button:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+        .auto-btn.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #2e7d32;
+        }
+
+        /* PK区域 */
+        .pk-area {
+            background: var(--secondary);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 15px 0;
+            color: var(--text-light);
+        }
+        .pk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .pk-badge {
+            background: var(--accent);
+            color: var(--text-dark);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+        .pk-versus {
+            display: flex;
+            justify-content: space-around;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .pk-player, .pk-opponent {
+            text-align: center;
+        }
+        .pk-score {
+            font-size: 32px;
+            background: var(--text-dark);
+            color: var(--accent);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin: 5px 0;
+        }
+        .pk-result {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 8px;
+            min-height: 28px;
+        }
+
+        /* 排行榜 */
+        .leaderboard {
+            background: var(--secondary);
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .leaderboard h3 {
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        .record-list {
+            max-height: 140px;
+            overflow-y: auto;
+            background: var(--text-dark);
+            border-radius: 12px;
+            padding: 8px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        .record-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 8px;
+            border-bottom: 1px dashed var(--primary);
+        }
+
+        .floating-text {
+            position: absolute;
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--primary);
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 100;
+            animation: floatUp 0.8s ease-out forwards;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .victory-text {
+            font-size: 40px;
+            color: gold;
+            text-shadow: 0 0 20px orange;
+            animation: floatUp 1s ease-out forwards;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 0; transform: translate(-50%, -150px) scale(1.5); }
+        }
+        .hint {
+            text-align: center;
+            margin: 10px 0 0;
+            color: var(--text-light);
+            font-style: italic;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container wood" id="container">
+        <!-- 木鱼 SVG -->
+        <div class="muyu" id="muyu">
+            <svg class="muyu-svg" viewBox="0 0 280 200">
+                <ellipse class="body" cx="140" cy="100" rx="120" ry="70" stroke-width="8" fill="var(--primary)" stroke="var(--secondary)"/>
+                <circle class="dots" cx="100" cy="80" r="12" stroke-width="3" fill="var(--accent)" stroke="var(--secondary)"/>
+                <circle class="dots" cx="180" cy="80" r="12" stroke-width="3" fill="var(--accent)" stroke="var(--secondary)"/>
+                <path class="mouth" d="M110 130 Q140 150, 170 130" stroke="var(--secondary)" stroke-width="4" fill="none"/>
+            </svg>
+        </div>
+
+        <!-- 修仙称号区 -->
+        <div class="title-area">
+            <span>🧘 境界</span>
+            <span class="title-badge" id="titleDisplay">炼气期</span>
+        </div>
+
+        <div class="counter-panel">
+            🧮 功德
+            <span id="countDisplay">0</span>
+        </div>
+
+        <!-- 第一行控件：皮肤 + 自动敲 + 音效 -->
+        <div class="controls-row">
+            <select id="skinSelect">
+                <option value="wood">🌳 木质</option>
+                <option value="dark">🌑 暗黑</option>
+                <option value="gold">🌟 黄金</option>
+                <option value="crystal">💎 水晶</option>
+            </select>
+            <button class="auto-btn" id="autoBtn">🔁 自动敲</button>
+            <select id="soundSelect">
+                <option value="muyu">🔔 木鱼</option>
+                <option value="bell">🔔 铃铛</option>
+                <option value="electronic">⚡ 电子</option>
+            </select>
+        </div>
+
+        <!-- PK 对战区（动态对手） -->
+        <div class="pk-area">
+            <div class="pk-header">
+                <span class="pk-badge">⚔️ PK 对战</span>
+                <button id="newOpponentBtn">🔄 换对手</button>
+            </div>
+            <div class="pk-versus">
+                <div class="pk-player">
+                    <div>你</div>
+                    <div class="pk-score" id="playerScore">0</div>
+                </div>
+                <div style="font-size:30px;">VS</div>
+                <div class="pk-opponent">
+                    <div>对手</div>
+                    <div class="pk-score" id="opponentScore">0</div>
+                </div>
+            </div>
+            <div class="pk-result" id="pkResult">⚡ 点击木鱼开始对战</div>
+        </div>
+
+        <!-- 提醒设置 -->
+        <div class="controls-row">
+            <span>⏰ 提醒</span>
+            <select id="reminderInterval">
+                <option value="0">关闭</option>
+                <option value="15">15分钟</option>
+                <option value="30" selected>30分钟</option>
+                <option value="60">60分钟</option>
+            </select>
+            <button id="requestNotifyBtn">🔔 授权通知</button>
+        </div>
+
+        <!-- 功德排行榜（最近记录） -->
+        <div class="leaderboard">
+            <h3>📋 最近功德记录</h3>
+            <div class="record-list" id="recordList"></div>
+        </div>
+        <div class="hint">👆 戳木鱼 / 自动敲 / 越级挑战 · 从炼气到天道</div>
+    </div>
+
+    <script>
+        // ---------- 初始化变量 ----------
+        let count = parseInt(localStorage.getItem('totalCount')) || 0;
+        const countDisplay = document.getElementById('countDisplay');
+        const titleDisplay = document.getElementById('titleDisplay');
+        const muyu = document.getElementById('muyu');
+        const container = document.getElementById('container');
+        const autoBtn = document.getElementById('autoBtn');
+        const soundSelect = document.getElementById('soundSelect');
+        const skinSelect = document.getElementById('skinSelect');
+        const recordList = document.getElementById('recordList');
+        // PK元素
+        const playerScoreSpan = document.getElementById('playerScore');
+        const opponentScoreSpan = document.getElementById('opponentScore');
+        const pkResultDiv = document.getElementById('pkResult');
+        const newOpponentBtn = document.getElementById('newOpponentBtn');
+        // 提醒元素
+        const reminderInterval = document.getElementById('reminderInterval');
+        const requestNotifyBtn = document.getElementById('requestNotifyBtn');
+
+        // 自动敲相关
+        let autoActive = false;
+        let autoInterval = null;
+
+        // 音频上下文
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        // 音效配置
+        const soundMap = {
+            muyu: { type: 'sine', freq: 180 },
+            bell: { type: 'triangle', freq: 440 },
+            electronic: { type: 'square', freq: 220 }
+        };
+
+        // 排行榜存储
+        let records = JSON.parse(localStorage.getItem('records')) || [];
+
+        // PK 对手功德（动态生成）
+        let opponentScore = 100;
+
+        // 提醒定时器
+        let reminderTimer = null;
+
+        // 记录上一次PK是否处于胜利状态（用于击败特效）
+        let wasWinning = false;
+
+        // ---------- 完整修仙境界定义（人界9境 + 仙界16境 + 圣境5境） ----------
+        const cultivationLevels = [
+            // 人界 (0 ~ 100000)
+            { name: '炼气期', threshold: 0, bgColor: '#a5d6a5', color: '#1e3a1e' },
+            { name: '筑基期', threshold: 101, bgColor: '#81c3f0', color: '#103850' },
+            { name: '金丹期', threshold: 301, bgColor: '#c87beb', color: '#2e0854' },
+            { name: '元婴期', threshold: 801, bgColor: '#ffb347', color: '#5e2a0c' },
+            { name: '化神期', threshold: 2001, bgColor: '#ff6b6b', color: '#5e0c0c' },
+            { name: '炼虚期', threshold: 5001, bgColor: '#db7093', color: '#3e0f2a' },
+            { name: '合体期', threshold: 10001, bgColor: '#aa80ff', color: '#2a0f4a' },
+            { name: '大乘期', threshold: 20001, bgColor: '#ffaa00', color: '#4a2f0f' },
+            { name: '渡劫期', threshold: 50001, bgColor: 'linear-gradient(45deg, #ff4d4d, #ffaa00)', color: 'white', glow: true },
+            { name: '散仙', threshold: 100001, bgColor: '#808080', color: '#f0f0f0' }, // 特殊，放在渡劫后作为备选
+
+            // 仙界 (地仙 -> 仙尊) 阈值继续增加
+            { name: '地仙', threshold: 200000, bgColor: '#c0c0c0', color: '#1e1e1e' },
+            { name: '人仙', threshold: 500000, bgColor: '#d4af37', color: '#2b1e0b' },
+            { name: '天仙', threshold: 1000000, bgColor: '#f0e68c', color: '#3e2f0b' },
+            { name: '真仙', threshold: 2000000, bgColor: '#ffd700', color: '#4a380f' },
+            { name: '玄仙', threshold: 5000000, bgColor: '#daa520', color: '#4a2e0f' },
+            { name: '金仙', threshold: 10000000, bgColor: '#b8860b', color: '#4a2f0f' },
+            { name: '太乙真仙', threshold: 20000000, bgColor: '#cd7f32', color: '#4a321a' },
+            { name: '太乙玄仙', threshold: 50000000, bgColor: '#b87333', color: '#4a2e1a' },
+            { name: '太乙金仙', threshold: 100000000, bgColor: '#c06014', color: '#4a2b14' },
+            { name: '九天玄仙', threshold: 200000000, bgColor: '#9f4f2b', color: '#f0e6d2' },
+            { name: '罗天上仙', threshold: 500000000, bgColor: '#8b4513', color: '#f5deb3' },
+            { name: '大罗金仙', threshold: 1000000000, bgColor: '#4b0082', color: '#f0e6ff' },
+            { name: '仙君', threshold: 2000000000, bgColor: '#2e0854', color: '#e6ccff' },
+            { name: '仙王', threshold: 5000000000, bgColor: '#1a0f3a', color: '#d9b3ff' },
+            { name: '仙帝', threshold: 10000000000, bgColor: '#0a0a1e', color: '#c0a0ff' },
+            { name: '仙尊', threshold: 20000000000, bgColor: '#050510', color: '#b38cff' },
+
+            // 圣境 (极高)
+            { name: '准圣', threshold: 50000000000, bgColor: 'linear-gradient(45deg, #8a2be2, #9400d3)', color: 'white', glow: true },
+            { name: '混元大罗金仙（圣人）', threshold: 100000000000, bgColor: 'linear-gradient(45deg, #ff1493, #ffd700)', color: 'white', glow: true },
+            { name: '天道', threshold: 500000000000, bgColor: 'linear-gradient(45deg, #00ffff, #ff00ff)', color: 'black', glow: true },
+            { name: '大道', threshold: 1000000000000, bgColor: 'transparent', color: 'white', glow: true } // 无色
+        ];
+
+        // 获取当前功德对应的境界
+        function getCultivationLevel(merit) {
+            for (let i = cultivationLevels.length - 1; i >= 0; i--) {
+                if (merit >= cultivationLevels[i].threshold) {
+                    return cultivationLevels[i];
+                }
+            }
+            return cultivationLevels[0];
+        }
+
+        // 更新称号显示
+        function updateTitle() {
+            const level = getCultivationLevel(count);
+            titleDisplay.textContent = level.name;
+            // 设置背景和颜色
+            titleDisplay.style.background = level.bgColor;
+            titleDisplay.style.color = level.color || 'white';
+            // 添加闪烁效果（如果境界定义有glow）
+            if (level.glow) {
+                titleDisplay.classList.add('glow-text');
+            } else {
+                titleDisplay.classList.remove('glow-text');
+            }
+        }
+
+        // ---------- 初始化显示 ----------
+        countDisplay.textContent = count;
+        playerScoreSpan.textContent = count;
+        updateTitle();               // 初始化称号
+        generateStrongerOpponent();  // 生成更强的对手
+        renderRecords();
+        applySkin(skinSelect.value);
+
+        // ---------- 音效 ----------
+        function playSound() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => createSound());
+            } else {
+                createSound();
+            }
+        }
+        function createSound() {
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const selected = soundSelect.value;
+            const { type, freq } = soundMap[selected];
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.25);
+        }
+
+        // 飘字（普通+1）
+        function createFloatingPlusOne() {
+            const floatDiv = document.createElement('div');
+            floatDiv.className = 'floating-text';
+            const randomOffset = (Math.random() * 40 - 20).toFixed(0);
+            floatDiv.style.transform = `translate(calc(-50% + ${randomOffset}px), -50%)`;
+            floatDiv.textContent = '+1';
+            container.appendChild(floatDiv);
+            floatDiv.addEventListener('animationend', () => floatDiv.remove());
+        }
+
+        // 击败特效
+        function showVictoryEffect() {
+            const victoryDiv = document.createElement('div');
+            victoryDiv.className = 'floating-text victory-text';
+            victoryDiv.style.transform = 'translate(-50%, -50%)';
+            victoryDiv.textContent = '🏆 击败对手！';
+            container.appendChild(victoryDiv);
+            victoryDiv.addEventListener('animationend', () => victoryDiv.remove());
+        }
+        function playVictorySound() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume().then(() => createVictorySound());
+            } else {
+                createVictorySound();
+            }
+        }
+        function createVictorySound() {
+            const now = audioCtx.currentTime;
+            const osc1 = audioCtx.createOscillator();
+            const gain1 = audioCtx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.value = 523.25;
+            gain1.gain.setValueAtTime(0.15, now);
+            gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            osc1.connect(gain1);
+            gain1.connect(audioCtx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.2);
+
+            const osc2 = audioCtx.createOscillator();
+            const gain2 = audioCtx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.value = 659.25;
+            gain2.gain.setValueAtTime(0.15, now + 0.1);
+            gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+            osc2.connect(gain2);
+            gain2.connect(audioCtx.destination);
+            osc2.start(now + 0.1);
+            osc2.stop(now + 0.3);
+        }
+
+        // 敲击主逻辑
+        function knock() {
+            count++;
+            countDisplay.textContent = count;
+            playerScoreSpan.textContent = count;
+            localStorage.setItem('totalCount', count);
+            updateTitle();   // 更新境界称号
+
+            // 记录本次敲击
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            records.unshift({ time: timeStr, total: count });
+            if (records.length > 10) records.pop();
+            localStorage.setItem('records', JSON.stringify(records));
+            renderRecords();
+
+            playSound();
+            createFloatingPlusOne();
+            checkPK(); // 检查PK状态
+        }
+
+        // 渲染排行榜
+        function renderRecords() {
+            if (records.length === 0) {
+                recordList.innerHTML = '<div class="record-item" style="justify-content:center;">暂无记录，敲一下试试</div>';
+                return;
+            }
+            let html = '';
+            records.forEach((r, idx) => {
+                // 格式化大数字，可加单位，但简单显示
+                html += `<div class="record-item"><span>#${idx+1} ${r.time}</span><span>功德 ${r.total}</span></div>`;
+            });
+            recordList.innerHTML = html;
+        }
+
+        // 皮肤切换
+        function applySkin(skin) {
+            container.className = `container ${skin}`;
+        }
+        skinSelect.addEventListener('change', (e) => applySkin(e.target.value));
+
+        // ---------- 生成更强的对手（根据当前功德） ----------
+        function generateStrongerOpponent() {
+            // 基础倍数：1.5 ~ 3.0 之间随机，让对手更强
+            const multiplier = 1.5 + Math.random() * 1.5; // 1.5 ~ 3.0
+            let newOpponent = Math.floor(count * multiplier);
+            // 确保至少比玩家高一点，且不低于某个最小值
+            newOpponent = Math.max(newOpponent, count + 10);
+            // 随机再加一点波动
+            newOpponent += Math.floor(Math.random() * 100);
+            opponentScore = newOpponent;
+            opponentScoreSpan.textContent = opponentScore;
+            pkResultDiv.textContent = '⚡ 更强的对手出现！';
+            // 重置击败状态
+            wasWinning = false;
+        }
+
+        // 检查PK胜负
+        function checkPK() {
+            const isWinning = count > opponentScore;
+            if (isWinning) {
+                pkResultDiv.textContent = '🎉 你赢了！功德超过对手！';
+                if (!wasWinning) {
+                    showVictoryEffect();
+                    playVictorySound();
+                }
+            } else if (count === opponentScore) {
+                pkResultDiv.textContent = '🤝 平手，再敲一下？';
+            } else {
+                pkResultDiv.textContent = `💪 还差 ${(opponentScore - count).toLocaleString()} 功德击败对手`;
+            }
+            wasWinning = isWinning;
+        }
+
+        // 换对手按钮
+        newOpponentBtn.addEventListener('click', () => {
+            generateStrongerOpponent();
+            checkPK(); // 更新提示
+        });
+
+        // 提醒功能
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("浏览器不支持通知");
+                return;
+            }
+            if (Notification.permission === "granted") {
+                new Notification("木鱼提醒已开启", { body: "我会定时提醒你敲木鱼积德～" });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(perm => {
+                    if (perm === "granted") {
+                        new Notification("谢谢授权", { body: "每30分钟提醒一次（可修改）" });
+                    }
+                });
+            }
+        }
+        function setupReminder(minutes) {
+            if (reminderTimer) clearInterval(reminderTimer);
+            if (minutes <= 0) return;
+            reminderTimer = setInterval(() => {
+                if (Notification.permission === "granted") {
+                    new Notification("⏰ 敲木鱼时间到！", {
+                        body: `当前功德 ${count.toLocaleString()}，再来一下！`,
+                        icon: "https://cdn-icons-png.flaticon.com/512/616/616490.png"
+                    });
+                } else {
+                    alert(`⏰ 该敲木鱼了！当前功德 ${count.toLocaleString()}`);
+                }
+            }, minutes * 60 * 1000);
+        }
+        reminderInterval.addEventListener('change', (e) => {
+            const mins = parseInt(e.target.value);
+            setupReminder(mins);
+        });
+        requestNotifyBtn.addEventListener('click', requestNotificationPermission);
+
+        // ---------- 事件绑定 ----------
+        muyu.addEventListener('click', (e) => {
+            e.preventDefault();
+            knock();
+        });
+
+        autoBtn.addEventListener('click', () => {
+            autoActive = !autoActive;
+            if (autoActive) {
+                autoBtn.textContent = '⏸️ 暂停';
+                autoBtn.classList.add('active');
+                autoInterval = setInterval(() => {
+                    knock();
+                }, 1000);
+            } else {
+                autoBtn.textContent = '🔁 自动敲';
+                autoBtn.classList.remove('active');
+                clearInterval(autoInterval);
+                autoInterval = null;
+            }
+        });
+
+        // 清理定时器
+        window.addEventListener('beforeunload', () => {
+            if (autoInterval) clearInterval(autoInterval);
+            if (reminderTimer) clearInterval(reminderTimer);
+        });
+    </script>
+</body>
+</html>
